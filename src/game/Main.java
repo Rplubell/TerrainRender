@@ -7,8 +7,8 @@ package game;
  */
 
 
-import game.map.TerrainMap;
-import game.player.Player;
+import game.objects.map.TerrainMap;
+import game.objects.player.Player;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
@@ -24,15 +24,15 @@ import org.lwjgl.util.glu.GLU;
  */
 public class Main {
     
-    public static final int WIDTH = 1900;
-    public static final int HEIGHT = 1070;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
     public static final float mouseSens = 0.5f;
     public Player player;
-    public TerrainMap map;
+    public static TerrainMap terrainmap;
     
     public Main() {
-        player = new Player(0.0f, 0.0f, 0.0f, 0.5f);
-        map = new TerrainMap(65, 100,100,100,100);
+        player = new Player(10.0f, 10.0f, 10.0f, 0.5f);
+        terrainmap = new TerrainMap(65, 100,100,100,100);
     }
     
     void start() {
@@ -56,7 +56,7 @@ public class Main {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
         player.update();
-        map.renderVBO();
+        terrainmap.renderVBO();
         
         Display.sync(60);
         Display.update();
@@ -79,8 +79,8 @@ public class Main {
         glLoadIdentity();
         GLU.gluPerspective(70, (float)WIDTH/HEIGHT, 0.5f, 1000.0f);
         GL11.glMatrixMode(GL_MODELVIEW);
-        map.initVBO();
-        map.print();
+        terrainmap.initVBO();
+        //map.print();
     }
     
     public static void main(String args[]) {

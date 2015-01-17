@@ -10,6 +10,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBShaderObjects;
 import static org.lwjgl.opengl.GL11.GL_COLOR_ARRAY;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -36,6 +37,7 @@ import static org.lwjgl.opengl.GL15.glGenBuffers;
  * @author bplubell
  */
 public class TerrainMap {
+    private float scale;
     public static float[][] map;
     private int SIZE;
     private float amtSmooth = 0.5f;
@@ -49,16 +51,14 @@ public class TerrainMap {
     
     public TerrainMap(int size, float seed1, float seed2, float seed3, float seed4) {
         this.SIZE = size;
-        vertices = vertex_size*SIZE*SIZE*16;
-        vertex_data = BufferUtils.createFloatBuffer(vertices * vertex_size);
-        color_data = BufferUtils.createFloatBuffer(vertices * color_size);
         map = new float[SIZE][SIZE];
         map[0][0] = seed1;
         map[SIZE-1][0] = seed2;
         map[0][SIZE-1] = seed3;
         map[SIZE-1][SIZE-1] = seed4;
-        process(SIZE*SIZE);
+        process();
         smooth(amtSmooth);
+        detail();
     }
     
     public void print() {
@@ -71,6 +71,9 @@ public class TerrainMap {
     }
     
     public void initVBO() {
+        vertices = vertex_size*SIZE*SIZE*16;
+        vertex_data = BufferUtils.createFloatBuffer(vertices * vertex_size);
+        color_data = BufferUtils.createFloatBuffer(vertices * color_size);
         for(int x = 1; x+1 < SIZE; x++) {
             for(int z = 1; z+1 < SIZE; z++) {
                 vertex_data.put(new float[] {x, map[x][z], z});
@@ -114,21 +117,47 @@ public class TerrainMap {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     
+    public void detail() {
+        float[][] New = new float[((SIZE-1)*2)+1][((SIZE-1)*2)+1];
+        for(int x = 0; x+1 < SIZE; x++) {
+            for(int z = 0; z+1 < SIZE; z++) {
+                New[x*2][z*2] = map[x][z];
+            }
+        }
+        for(int x = 0; x < SIZE*2-2; x++) {
+            for(int z = 0; z < SIZE*2-2; z++) {
+                System.out.print("   " + New[x][z]);
+            }
+            System.out.println();
+        }
+        SIZE = ((SIZE-1)*2)+1;
+        map = new float[SIZE][SIZE];
+        map = New;
+        scale /= 2;
+    }
+    
     public void renderVBO() {
         glColor3f(0,0,0);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
-        glVertexPointer(vertex_size, GL_FLOAT, 0, 0l);
+        for(int i = 0; i < 1; i++) {
+            for(int j = 0; j < 1; j++) {
+                glPushMatrix();
+                glTranslatef(SIZE*j, 0.0f, SIZE*i);
+                glBindBuffer(GL_ARRAY_BUFFER, vbo_vertex_handle);
+                glVertexPointer(vertex_size, GL_FLOAT, 0, 0l);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo_color_handle);
-        glColorPointer(color_size, GL_FLOAT, 0, 0l);
+                glBindBuffer(GL_ARRAY_BUFFER, vbo_color_handle);
+                glColorPointer(color_size, GL_FLOAT, 0, 0l);
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
+                glEnableClientState(GL_VERTEX_ARRAY);
+                glEnableClientState(GL_COLOR_ARRAY);
 
-        glDrawArrays(GL_QUADS, 0, vertices);
+                glDrawArrays(GL_LINES, 0, vertices);
 
-        glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);
+                glDisableClientState(GL_COLOR_ARRAY);
+                glDisableClientState(GL_VERTEX_ARRAY);
+                glPopMatrix();
+            }
+        }
     }
     
     public void crapRender() {
@@ -179,7 +208,8 @@ public class TerrainMap {
         }
     }
     
-    void process(int passes) {//TODO Fix index per square value
+    void process(/*int passes*/) {//TODO Fix index per square value
+        int passes = SIZE*SIZE;
         for(int i = 0, squares = 1; i < passes /*&& squares < SIZE*/; i++, squares*=4) {
             float indexPerSquare = Math.round((SIZE-1)/Math.sqrt(squares));
             System.out.println(indexPerSquare);

@@ -9,6 +9,7 @@ package game.objects;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor3d;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex3f;
@@ -20,8 +21,8 @@ import static org.lwjgl.opengl.GL11.glVertex3f;
 public class cube {
     public static void draw() {
         
-        glBegin(GL11.GL_LINE_LOOP);
-            glColor3f(0.0f, 0.0f, 0.0f);
+        glBegin(GL11.GL_QUADS);
+            glColor3d(Math.random(), Math.random(), Math.random());
                 glVertex3f(-0.5f, 0.5f, 0.5f);
                 glVertex3f(0.5f, 0.5f, 0.5f);
                 glVertex3f(0.5f, 0.5f, -0.5f);

@@ -24,15 +24,15 @@ import org.lwjgl.util.glu.GLU;
  */
 public class Main {
     
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 1910;
+    public static final int HEIGHT = 1070;
     public static final float mouseSens = 0.5f;
     public Player player;
     public static TerrainMap terrainmap;
     
     public Main() {
-        player = new Player(10.0f, 10.0f, 10.0f, 0.5f);
-        terrainmap = new TerrainMap(65, 100,100,100,100);
+        player = new Player(10.0f, 10.0f, 10.0f, 0.05f);
+        terrainmap = new TerrainMap(17, 50,50,50,50);
     }
     
     void start() {
@@ -57,6 +57,7 @@ public class Main {
         glLoadIdentity();
         player.update();
         terrainmap.renderVBO();
+        
         
         Display.sync(60);
         Display.update();

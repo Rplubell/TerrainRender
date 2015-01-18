@@ -57,7 +57,7 @@ public class TerrainMap {
         map[0][SIZE-1] = seed3;
         map[SIZE-1][SIZE-1] = seed4;
         process();
-        smooth(amtSmooth);
+        //smooth(amtSmooth);
         //detail();
     }
     
@@ -135,6 +135,19 @@ public class TerrainMap {
         map = New;
     }
     
+    public void renderAsCubes() {
+        for(int i = 0; i < SIZE; i++) {
+            for(int j = 0; j < SIZE; j++) {
+                for(int x = 0; x < Math.round(map[i][j]); x++) {
+                    glPushMatrix();
+                    glTranslatef(i, x, j);
+                    game.objects.cube.draw();
+                    glPopMatrix();
+                }
+            }
+        }
+    }
+    
     public void renderVBO() {
         glColor3f(0,0,0);
         for(int i = 0; i < 1; i++) {
@@ -150,7 +163,7 @@ public class TerrainMap {
                 glEnableClientState(GL_VERTEX_ARRAY);
                 glEnableClientState(GL_COLOR_ARRAY);
 
-                glDrawArrays(GL_LINES, 0, vertices);
+                glDrawArrays(GL_QUADS, 0, vertices);
 
                 glDisableClientState(GL_COLOR_ARRAY);
                 glDisableClientState(GL_VERTEX_ARRAY);

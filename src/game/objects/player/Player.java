@@ -19,7 +19,7 @@ public class Player {
     private float moveSpeed;
     public GUI gui;
     public int health = 3;
-    private final float fallspeed = 0.1f;
+    private final float fallspeed = 0.01f;
 
     public Player(float x, float y, float z, float speed) {
         camera = new Camera(x, y, z);
@@ -35,7 +35,7 @@ public class Player {
                 adjustY();
                 break;
             case 0:
-                //adjustY();
+                adjustY();
                 break;
             case 1:
                 camera.position.y -= fallspeed;
